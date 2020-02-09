@@ -42,6 +42,26 @@ app.get('/blogs/new', (_req, res) => {
     res.render('new');
 });
 
+app.post('/blogs', (req, res) => {
+    Blog.create(req.body.blog, (err, newBlog) => {
+        if (err) {
+            console.log(`Error: ${err}`);
+        } else {
+            res.redirect('/blogs');
+        }
+    })
+})
+
+app.get('/blogs/:id', (req, res) => {
+    const { id } = req.params
+    Blog.findById(id, (err, foundBlog) => {
+        if (err) {
+            res.redirect('/index');
+        } else {
+            res.render('show', { blog: foundBlog });
+        }
+    })
+})
 
 app.get('*', (_req, res) => {
     res.send('Page not found... this path doesn\'t exist');
