@@ -38,6 +38,11 @@ app.get('/blogs', (_req, res) => {
     })
 });
 
+app.get('/blogs/new', (_req, res) => {
+    res.render('new');
+});
+
+
 app.get('*', (_req, res) => {
     res.send('Page not found... this path doesn\'t exist');
 });
