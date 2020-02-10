@@ -3,13 +3,15 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 const methodOverride = require('method-override')
+const sanitizer = require('express-sanitizer')
 
-mongoose.connect('mongodb://localhost:27017/restful-blog', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb://localhost:27017/restful-blog', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.use(methodOverride('_method'))
+app.use(sanitizer())
 
 const blogSchema = new mongoose.Schema({
     title: String,
@@ -45,7 +47,9 @@ app.get('/blogs/new', (_req, res) => {
 });
 
 app.post('/blogs', (req, res) => {
-    Blog.create(req.body.blog, (err, newBlog) => {
+    const { body } = req.body.blog
+    req.sanitizer(body)
+    Blog.create(body, (err, newBlog) => {
         if (err) {
             console.log(`Error: ${err}`);
         } else {
